@@ -13,7 +13,7 @@ console.timeEnd("Database startup");
 	console.time("Adding 100,000 documents to the database");
 	
 	var a = [];
-	for (let i = 0; i < 1; i++) {
+	for (let i = 0; i < 100000; i++) {
 		
 		a.push(db.append({
 			
@@ -31,7 +31,7 @@ console.timeEnd("Database startup");
 	
 	let i = 0;
 	let count = 0;
-	
+
 	fs.createReadStream("db").on('data', function(chunk) {
 
 		for (i=0; i < chunk.length; ++i)
