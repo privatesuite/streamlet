@@ -1,0 +1,13 @@
+{
+  "name": "streamb",
+  "version": "1.0.0",
+  "description": "A powerful stream-based database",
+  "main": "src/index.js",
+  "author": "Private Suite Media, LLC",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "@types/node": "^12.7.5",
+    "msgpack-lite": "^0.1.26"
+  }
+}

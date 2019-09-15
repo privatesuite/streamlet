@@ -1,0 +1,11 @@
+# Vendor
+
+/node_modules
+
+# Personal
+
+/nodemon.json
+
+# Testing
+
+/db
