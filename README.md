@@ -10,4 +10,4 @@ You can install Streamlet by running `npm install privatesuite/streamlet` in the
 
 # License
 
-
+GNU Lesser General Public License v2.1
