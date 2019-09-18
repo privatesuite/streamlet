@@ -1,6 +1,6 @@
 const fs = require("fs");
-const stream = require("stream");
-const msgpack = require("msgpack-lite");
+const split = require("split");
+const hyperid = require("hyperid");
 
 class Database {
 
@@ -8,55 +8,107 @@ class Database {
 
 		this.file = file;
 
-		this.streams = {
+		this._streams = {
 
-			read: fs.createReadStream(file, {
-
-				flags: "r"
-
-			}),
 			write: fs.createWriteStream(file, {
 
 				flags: "a+"
 
-			}),
-
-			encode: msgpack.createEncodeStream()
+			})
 
 		}
 
-		this.queues = {
+		this._queues = {
 
-			read: [],
 			write: []
 
 		}
 
-		this.__ = {
+		this._documents = [];
 
-			newLine: Buffer.from("\n")
+		this._streams.write.setMaxListeners(100);
+		this.idInstance = hyperid({
+
+			fixedLength: 16,
+
+		});
+		
+	}
+
+	async init () {
+
+		this._documents = await this._read();
+
+	}
+
+	async insert (document) {
+
+		this._queues.write.push(document);
+		return this._fulfillWrite();
+
+	}
+
+	async insertBulk (bulk) {
+
+		const promises = [];
+		for (const document of bulk) {
+
+			this._queues.write.push(document);
+			promises.push(this._fulfillWrite());
 
 		}
 
-		this.streams.write.setMaxListeners(100);
-		this.streams.encode.pipe(this.streams.write, {end: false});
+		return Promise.all(promises);
 
 	}
 
-	async append (document) {
+	find (fn) {
 
-		this.queues.write.push(document);
-		return this.__fulfillWrite();
+		return this._documents.filter(fn);
 
 	}
 
-	async __fulfillWrite (uid = Math.random().toString(36).replace("0.", "").slice(0, 9), data = this.queues.write.shift()) {
+	findOne (fn) {
+
+		return this._documents.find(fn);
+
+	}
+
+	async _read () {
 
 		return new Promise((resolve, reject) => {
 
-			const id = uid || Math.random().toString(36).replace("0.", "").slice(0, 9);
+			let i = 0;
+			const arr = [];
+			const readStream = fs.createReadStream(this.file).pipe(split());
 
-			this.streams.write.write(Buffer.concat([Buffer.from(id + "-"), msgpack.encode(data), this.__.newLine]), err => {
+			readStream.on("data", chunk => {
+		
+				if (!chunk.trim()) return;
+
+				arr.push({
+						
+					...JSON.parse(chunk.slice(34).trim()),
+					_id: chunk.slice(0, 33).toString()
+						
+				});
+
+			});
+			readStream.on("end", () => resolve(arr));
+
+		});
+
+	}
+
+	async _fulfillWrite (uid = this.idInstance(), data = this._queues.write.shift()) {
+
+		return new Promise((resolve, reject) => {
+
+			const id = uid || this.idInstance();
+
+			this._documents.push({...data, _id: id});
+
+			this._streams.write.write(id + "-" + JSON.stringify(data) + "\n", err => {
 
 				if (err) throw err;
 	
