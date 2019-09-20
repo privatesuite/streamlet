@@ -2,6 +2,20 @@ const fs = require("fs");
 const split = require("split");
 const hyperid = require("hyperid");
 
+const dateISORegex = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
+
+function _jsonParse (key, val) {
+
+	if (typeof val === "string") {
+
+		if (dateISORegex.exec(val)) return new Date(val);
+
+	}
+
+	return val;
+
+}
+
 class Database {
 
 	constructor (file) {
@@ -24,6 +38,7 @@ class Database {
 
 		}
 
+		this._docIndMap = new Map();
 		this._documents = [];
 
 		this._streams.write.setMaxListeners(100);
@@ -37,7 +52,7 @@ class Database {
 
 	async init () {
 
-		this._documents = await this._read();
+		return this._read();
 
 	}
 
@@ -74,27 +89,51 @@ class Database {
 
 	}
 
+	findIndex (fn) {
+
+		return this._documents.findIndex(fn);
+
+	}
+
+	findIndexes (fn) {
+
+		return this.find(fn).map(_ => this._docIndMap.get(_._id));
+
+	}
+
+	async _push (id, data) {
+
+		if (this._docIndMap.has(id)) {
+
+			this._documents.splice(this._docIndMap.get(id), 1);
+
+		}
+
+		this._docIndMap.set(id, this._documents.length);
+
+		this._documents.push({
+						
+			...data,
+			_id: id
+			
+		});
+
+	}
+
 	async _read () {
 
 		return new Promise((resolve, reject) => {
 
-			let i = 0;
-			const arr = [];
 			const readStream = fs.createReadStream(this.file).pipe(split());
 
 			readStream.on("data", chunk => {
 		
 				if (!chunk.trim()) return;
 
-				arr.push({
-						
-					...JSON.parse(chunk.slice(34).trim()),
-					_id: chunk.slice(0, 33).toString()
-						
-				});
+				this._push(chunk.slice(0, 33).toString(), JSON.parse(chunk.slice(34).trim(), _jsonParse));
 
 			});
-			readStream.on("end", () => resolve(arr));
+			readStream.on("end", () => resolve(this._documents));
 
 		});
 

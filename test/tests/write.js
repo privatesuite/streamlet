@@ -23,7 +23,8 @@ module.exports = {
 			itemsAdded.push({
 				
 				test: "hello_world",
-				value: Math.random().toString(36)
+				value: Math.random().toString(36),
+				date: new Date()
 				
 			});
 			
@@ -31,7 +32,7 @@ module.exports = {
 		
 		console.time(`Writing ${items} to database`);
 
-		await db.insertBulk(itemsAdded)
+		await db.insertBulk(itemsAdded);
 		
 		console.timeEnd(`Writing ${items} to database`);
 
