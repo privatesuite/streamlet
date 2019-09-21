@@ -1,5 +1,5 @@
 {
-  "name": "streamb",
+  "name": "streamlet",
   "version": "1.0.0",
   "description": "A powerful stream-based database",
   "main": "src/index.js",
