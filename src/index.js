@@ -48,7 +48,7 @@ class Database {
 			fixedLength: 16,
 
 		});
-		
+
 	}
 
 	async init () {
@@ -90,7 +90,7 @@ class Database {
 				if (err) throw err;
 
 				resolve();
-				
+
 			});
 
 		});
@@ -148,19 +148,19 @@ class Database {
 			let index = this.findIndex(_ => _._id === id);
 
 			this._documents[index] = {
-				
+
 				...document,
 				_id: id
 
 			}
 
 		} else {
-			
+
 			this._documents.push({
-						
+
 				...document,
 				_id: id
-				
+
 			});
 
 			this._documentIdentifiers.add(id);
@@ -176,7 +176,7 @@ class Database {
 			const readStream = fs.createReadStream(this.file).pipe(split());
 
 			readStream.on("data", chunk => {
-		
+
 				if (!chunk.trim()) return;
 
 				const id = chunk.slice(0, 33).toString();
@@ -215,9 +215,9 @@ class Database {
 			this._streams.write.write(id + "-" + JSON.stringify(data) + "\n", err => {
 
 				if (err) throw err;
-	
-				resolve();
-				
+
+				resolve(id);
+
 			});
 
 		});
