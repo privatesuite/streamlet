@@ -216,7 +216,7 @@ class Database {
 
 				if (err) throw err;
 	
-				resolve();
+				resolve(id);
 				
 			});
 
