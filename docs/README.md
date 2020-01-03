@@ -7,6 +7,7 @@ Main Database Constructor
 **Consructor**:   
 
 * [Database](#Database)
+    * [.init()](#Database+init)
     * [.get(index)](#Database+get) ⇒ <code>object</code>
     * [.insert(document)](#Database+insert) ⇒ <code>string</code>
     * [.edit(id, document)](#Database+edit)
@@ -18,6 +19,12 @@ Main Database Constructor
     * [.findIndex(fn)](#Database+findIndex) ⇒ <code>number</code>
     * [.findIndexes(fn)](#Database+findIndexes) ⇒ <code>Array.&lt;number&gt;</code>
 
+<a name="Database+init"></a>
+
+### database.init()
+Initialise the database file
+
+**Kind**: instance method of [<code>Database</code>](#Database)  
 <a name="Database+get"></a>
 
 ### database.get(index) ⇒ <code>object</code>
