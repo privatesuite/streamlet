@@ -1,11 +1,8 @@
 # Vendor
-
 /node_modules
 
 # Personal
-
 /nodemon.json
 
 # Testing
-
 /test/db

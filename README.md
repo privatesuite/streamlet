@@ -1,13 +1,24 @@
 # Streamlet
+Streamlet is a NodeJS-based stream-oriented database optimal for small scale projects that need a high speed method for storing data.
 
-# What is Streamlet?
+## Getting started
+Add Streamlet to your project
+```
+npm install privatesuite/streamlet
+```
 
-Streamlet is a NodeJS-based stream-oriented database. Amazingly, using streams allows it to go up to 100,000 ops/sec on unspecialized hardware.
+Create a streamlet instance
+```js
+const streamlet = require('streamlet')
+const db = new Streamlet('./db')
+```
 
-# How do install Streamlet?
+## Running tests
+Streamlet uses [Mocha](https://github.com/mochajs/mocha) and [Chai](https://github.com/chaijs/chai) to run tests, If Mocha is installed simpily run `mocha` from the root directory.
 
-You can install Streamlet by running `npm install privatesuite/streamlet` in the commandline and project directory of your choosing.
+## Authors
+- [Aurame](https://github.com/SuperAuguste) - Initial work
+- [Puffycheeses](https://github.com/Puffycheeses) - Documentation & Maintenance
 
-# License
-
-GNU Lesser General Public License v2.1
+## License
+This project is licensed under the GNU General Public License v3
